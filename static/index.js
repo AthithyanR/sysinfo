@@ -1,22 +1,29 @@
-async function update() {
-    try {
-        const res = await fetch('/api/cpus');
-        const cpus = await res.json();
+async function update(cpus) {
+    const cpuTemplate = `
+        <div class="template">
+        ${cpus.map((cpu, idx) => `
+            <div class="cell-wrapper">
+                <div>
+                    core #${idx}: 
+                </div>
+                <div style="width:${400 * (cpu / 100)}px">
+                    ${cpu.toFixed(2)}%
+                </div>
+            </div>
+        `).join('')}
+        </div>
+    `;
 
-        const cpuTemplate = [
-            '<div>',
-            ...cpus.map((cpu, idx) => `<div>core #${idx}: ${cpu}</div>`),
-            '</div>'
-        ].join('');
-
-        document.body.innerHTML = cpuTemplate;
-    } catch (e) {
-        console.log(e);
-    }
+    document.body.innerHTML = cpuTemplate;
 };
 
 function on_load() {
-    setInterval(update, 1000);
+    const ws = new WebSocket(`ws://${location.host}/realtime/cpus`);
+    ws.onmessage = (event) => {
+        const cpus = JSON.parse(event.data);
+        update(cpus);
+    };
+    ws.onerror = console.error;
 }
 
 document.addEventListener('DOMContentLoaded', on_load);

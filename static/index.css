@@ -2,3 +2,26 @@ body {
     background-color: black;
     color: whitesmoke;
 }
+
+.template {
+    width: 500px;
+    background-color: brown;
+}
+
+.cell-wrapper {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+
+    :nth-child(1) {
+        width: 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    :nth-child(2) {
+        background-color: blue;
+        transition: width 0.2s;
+    }
+}
